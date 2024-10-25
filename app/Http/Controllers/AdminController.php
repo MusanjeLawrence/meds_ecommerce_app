@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Category;
 
+use App\Models\Product;
+
 class AdminController extends Controller
 {
     //creating category method on admin dashboard
@@ -29,5 +31,28 @@ class AdminController extends Controller
 
         return redirect()->back()->with('message','Category Deleted Successfully');
 
+    }
+    public function view_product(){
+
+        $category = category::all();
+        return view('admin.product', compact('category'));
+    }
+    
+    public function add_product(Request $request){
+        $product = new product;
+        $product->title = $request->title;
+        $product->description = $request->description;
+        $product->price = $request->price;
+        $product->discount = $request->discount;
+        $product->category = $request->category;
+
+        $image = $request->image;
+        $imagename = time().'.'.$image->getClientOriginalExtension();
+        $request->image->move('product', $imagename);
+
+        $product->image=$imagename;
+
+        $product->save();
+        return redirect()->back()->with('message','Product Added Successfully');
     }
 }
